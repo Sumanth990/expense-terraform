@@ -16,3 +16,10 @@ resource "aws_subnet" "main" {
     Name = "subnet-${count.index}"
   }
 }
+
+resource "aws_vpc_peering_connection" "main" {
+  #peer_owner_id = var.peer_owner_id # optional - In our case both the vpc are in same account, so not required
+  peer_vpc_id   = data.aws_vpc.default.id #we tried to achieve one peering connection.
+  vpc_id        = aws_vpc.main.id #We tried to fetch the existing default VPC info rather than hard coding it.
+
+}
