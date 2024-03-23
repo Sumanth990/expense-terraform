@@ -51,6 +51,7 @@ resource "aws_route_table_association" "public" { # this route table will be ass
 }
 
 resource "aws_eip" "main" {
+  count      = length(var.public_subnets_cidr)
   domain   = "vpc"
 }
 
@@ -60,7 +61,7 @@ resource "aws_nat_gateway" "main" {
   subnet_id     = lookup(element(aws_subnet.public, count.index), "id", null)
 
   tags = {
-    Name = "ngw-${count.index + 1}"
+    Name = "ngw-${count.index+1}"
   }
 }
 
