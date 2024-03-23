@@ -55,13 +55,14 @@ resource "aws_eip" "main" {
 }
 
 resource "aws_nat_gateway" "main" {
-  count = length(var.public_subnets_cidr)
-  allocation_id = lookup(element(aws_eip.main,count.index), "id", null)
-  subnet_id     = lookup(element(aws_subnet.public,count.index), "id", null)
+  count         = length(var.public_subnets_cidr)
+  allocation_id = lookup(element(aws_eip.main, count.index), "id", null)
+  subnet_id     = lookup(element(aws_subnet.public, count.index), "id", null)
 
   tags = {
     Name = "ngw-${count.index + 1}"
   }
+}
 
 resource "aws_subnet" "public" {
   count      = length(var.public_subnets_cidr)
