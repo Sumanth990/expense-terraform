@@ -6,6 +6,17 @@ resource "aws_vpc" "main" {
   }
 }
 
+resource "aws_vpc_peering_connection" "main" {
+  #peer_owner_id = var.peer_owner_id # optional - In our case both the vpc are in same account, so not required
+  peer_vpc_id   = data.aws_vpc.default.id #we tried to achieve one peering connection.
+  vpc_id        = aws_vpc.main.id #We tried to fetch the existing default VPC info rather than hard coding it.
+  auto_accept   = true
+
+  tags = {
+    Name = "${var.env}-vpc-with-default-vpc"
+  }
+}
+
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
 
@@ -23,9 +34,20 @@ resource "aws_route_table" "public" {
     gateway_id = aws_internet_gateway.main.id
   }
 
+  route {
+    cidr_block                = data.aws_vpc.default.cidr_block # for default vpc we are creating peering connection
+    vpc_peering_connection_id = aws_vpc_peering_connection.main.id # before creating association we need to create peering connection
+  }
+
   tags = {
     Name = "public-rt-${count.index+1}"
   }
+}
+
+resource "aws_route_table_association" "public" { # this route table will be associated to public subnet
+  count = length(var.public_subnets_cidr) # two route tables
+  route_table_id = lookup(element(aws_route_table.public,count.index), "id", null) #aws_route_table.public [count.index].id
+  subnet_id = lookup(element(aws_subnet.public,count.index), "id", null)
 }
 
 resource "aws_subnet" "public" {
@@ -50,16 +72,7 @@ resource "aws_subnet" "private" {
   }
 }
 
-resource "aws_vpc_peering_connection" "main" {
-  #peer_owner_id = var.peer_owner_id # optional - In our case both the vpc are in same account, so not required
-  peer_vpc_id   = data.aws_vpc.default.id #we tried to achieve one peering connection.
-  vpc_id        = aws_vpc.main.id #We tried to fetch the existing default VPC info rather than hard coding it.
-  auto_accept   = true
 
-  tags = {
-    Name = "${var.env}-vpc-with-default-vpc"
-  }
-}
 
 resource "aws_route" "main" {
   route_table_id            = aws_vpc.main.main_route_table_id
