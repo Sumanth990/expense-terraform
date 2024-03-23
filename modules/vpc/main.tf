@@ -87,42 +87,6 @@ resource "aws_subnet" "web" {
   }
 }
 
-  resource "aws_route_table" "web" {
-    count = length(var.web_subnets_cidr)
-    vpc_id = aws_vpc.main.id
-
-    route {
-      cidr_block = "0.0.0.0/0"
-      nat_gateway_id = lookup(element(aws_nat_gateway.main,count.index), "id", null)
-    }
-
-    route {
-      cidr_block                =  data.aws_vpc.default.cidr_block # for default vpc we are creating peering connection
-      vpc_peering_connection_id = aws_vpc_peering_connection.main.id # before creating association we need to create peering connection
-    }
-
-    tags = {
-      Name = "web-rt-${count.index+1}"
-    }
-  }
-
-  resource "aws_route_table_association" "web" { # this route table will be associated to public subnet
-    count = length(var.web_subnets_cidr) # two route tables
-    route_table_id = lookup(element(aws_route_table.web,count.index), "id", null) #aws_route_table.private [count.index].id
-    subnet_id = lookup(element(aws_subnet.web,count.index), "id", null)
-  }
-
-resource "aws_subnet" "web" {
-  count      = length(var.web_subnets_cidr)
-  vpc_id     = aws_vpc.main.id
-  cidr_block = element(var.web_subnets_cidr, count.index)
-  availability_zone = element(var.az, count.index)
-
-  tags = {
-    Name = "web-subnet-${count.index+1}"
-  }
-}
-
 resource "aws_route_table" "web" {
   count = length(var.web_subnets_cidr)
   vpc_id = aws_vpc.main.id
