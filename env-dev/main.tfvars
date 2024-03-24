@@ -11,3 +11,14 @@ vpc = {                             ## for each
     az = ["us-east-1a", "us-east-1b"]
   }
 }
+
+rds = {
+  main = {
+    allocated_storage    = 10
+    db_name              = "expense"
+    engine               = "mysql"
+    engine_version       = "5.7" #project requirement
+    instance_class       = "db.t3.micro"
+    family               = "mysql5.7"
+  }
+}
