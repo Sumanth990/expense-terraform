@@ -7,17 +7,27 @@ module "vpc" {
   app_subnets_cidr = lookup (each.value, "app_subnets_cidr", null)
   db_subnets_cidr = lookup (each.value, "db_subnets_cidr", null)
   az = lookup (each.value, "az", null)
+
   env      = var.env
   project_name = var.project_name
 }
 
 module "rds" {
   source   = "./modules/rds"
-  for_each = var.rds
+
+  for_each          = var.rds
   allocated_storage = lookup(each.value, "allocated_storage", null)
   db_name           = lookup(each.value, "db_name", null)
   engine            = lookup(each.value, "engine", null)
   engine_version    = lookup(each.value, "engine_version", null)
-  instance_class    = lookup(each.value, "instance_class", null)
   family            = lookup(each.value, "family", null)
+  instance_class    = lookup(each.value, "instance_class", null)
+
+  env               = var.env
+  project_name      = var.project_name
+  kms_key_id        = var.kms_key_id
+
+  subnet_ids        = lookup(lookup(module.vpc,"main", null), "db_subnets_ids", null) #vpc -> output.tf
+  vpc_id            = lookup(lookup(module.vpc,"main", null), "vpc_id", null) #vpc -> output.tf
+  sg_cidr_block     = lookup(lookup(var.vpc, "main", null), "app_subnets_cidr", null)
 }
