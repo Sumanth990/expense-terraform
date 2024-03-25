@@ -37,7 +37,7 @@ resource "aws_security_group" "main" {
   }
 }
 
-resource "aws_db_instance" "default" {
+resource "aws_db_instance" "main" {
   identifier           = "${var.env}-${var.project_name}-rds" #db instance needs a name
   allocated_storage    = var.allocated_storage
   db_name              = var.dbname
