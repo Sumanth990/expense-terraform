@@ -19,7 +19,7 @@ resource "aws_security_group" "main" {
 
   ingress {
     from_port        = 3306 #mysql runs on port no. 3306
-    to_port          = 3306 #aws open port no.3306
+    to_port          = 3306 #aws open port no.3306x
     protocol         = "tcp"
     cidr_blocks      = var.sg_cidr_block
   }
@@ -46,9 +46,9 @@ resource "aws_db_instance" "main" {
   instance_class       = var.instance_class
   username             = data.aws_ssm_parameter.username.value # We got the parameter and fetching it's value
   password             = data.aws_ssm_parameter.password.value
-  parameter_group_name = aws_db_parameter_group.main.name # helpful in doing custom configuration
+  parameter_group_name = aws_db_parameter_group.main.name # helpful in doing custom configuration.
   skip_final_snapshot  = true #When we try to delete db, it will ask to take backup to skip we are using true,in organization we require it.
-  storage_encrypted    = true # always true, no question asked. In order to enable we need kms key
+  storage_encrypted    = true # always true, no question asked. In order to enable we need kms_key_id
   kms_key_id           = var.kms_key_id
   db_subnet_group_name = aws_db_parameter_group.main.name # we are exclusively telling go ahead and create in DB
   vpc_security_group_ids = [aws_security_group.main.id]
