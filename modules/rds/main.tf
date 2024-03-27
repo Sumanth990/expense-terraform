@@ -50,7 +50,7 @@ resource "aws_db_instance" "main" {
   skip_final_snapshot  = true #When we try to delete db, it will ask to take backup to skip we are using true,in organization we require it.
   storage_encrypted    = true # always true, no question asked. In order to enable we need kms_key_id
   kms_key_id           = var.kms_key_id
-  db_subnet_group_name = aws_db_parameter_group.main.name # we are exclusively telling go ahead and create in DB
+  db_subnet_group_name = aws_db_subnet_group.main.name # we are exclusively telling go ahead and create in DB
   vpc_security_group_ids = [aws_security_group.main.id]
 }
 
