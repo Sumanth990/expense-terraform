@@ -1,0 +1,75 @@
+format_version: 10
+pipelines:
+  backend:
+    group: defaultGroup
+    label_template: ${COUNT}
+    lock_behavior: none
+    display_order: -1
+    materials:
+      terraformapply:
+        git: https://github.com/raghudevopsb77/expense-terraform
+        shallow_clone: false
+        auto_update: true
+        branch: main
+    stages:
+      - DEV:
+          fetch_materials: true
+          approval:
+            type: manual
+          jobs:
+            deployment:
+              timeout: 0
+              tasks:
+                - exec:
+#terraform init -backend-config=env-dev/state.tfvars
+                    command: terraform
+                    arguments: ["init", "-backend-config=env-dev/state.tfvars"]
+                - exec:
+#terraform apply -var-file=env-dev/main.tfvars -auto-approve
+                    command: terraform
+                    arguments: [ "apply", "-var-file=env-dev/main.tfvars", "-auto-approve" ]
+
+      - QA:
+          fetch_materials: true
+          approval:
+            type: manual
+            allow_only_on_success: true
+          jobs:
+            deployment:
+              timeout: 0
+              tasks:
+                - exec:
+                    command: ls
+                    arguments:
+                      - -l
+                      - -A
+
+      - UAT:
+          fetch_materials: true
+          approval:
+            type: manual
+            allow_only_on_success: true
+          jobs:
+            deployment:
+              timeout: 0
+              tasks:
+                - exec:
+                    command: ls
+                    arguments:
+                      - -l
+                      - -A
+
+      - PROD:
+          fetch_materials: true
+          approval:
+            type: manual
+            allow_only_on_success: true
+          jobs:
+            deployment:
+              timeout: 0
+              tasks:
+                - exec:
+                    command: ls
+                    arguments:
+                      - -l
+                      - -A
