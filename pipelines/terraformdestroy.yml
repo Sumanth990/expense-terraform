@@ -7,7 +7,7 @@ pipelines:
     display_order: -1
     materials:
       terraformdestroy:
-        git: https://github.com/raghudevopsb77/expense-terraform
+        git: https://github.com/Sumanth990/expense-terraform.git
         shallow_clone: false
         auto_update: true
         branch: main
