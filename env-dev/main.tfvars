@@ -1,4 +1,4 @@
-env = dev
+env = "dev"
 
 vpc = {
   main = {
