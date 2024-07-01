@@ -53,7 +53,7 @@ resource "aws_internet_gateway" "main" {
   }
 }
 
-#route table
+#route table public
 resource "aws_route_table" "public" {
   count  = length(var.public_subnet_cidr)
   vpc_id = aws_vpc.main.id
@@ -78,6 +78,42 @@ resource "aws_route_table_association" "public" {
   count          = length(var.public_subnet_cidr)
   subnet_id      = lookup(element(aws_subnet.public, count.index), "id", null)
   route_table_id = lookup(element(aws_route_table.public, count.index), "id", null)
+}
+
+#elastic IP address
+resource "aws_eip" "main" {
+  count  = length(var.public_subnet_cidr)
+  domain = "vpc"
+}
+#ngw
+resource "aws_nat_gateway" "main" {
+  count         = length(var.public_subnet_cidr)
+  allocation_id = lookup(element(aws_eip.main, count.index) "id", null)
+  subnet_id     = lookup(element(aws_subnet.public, count.index), "id", null)
+
+  tags = {
+    Name = "ngw-${count.index+1}"
+  }
+}
+
+#route table private
+resource "aws_route_table" "private" {
+  count  = length(var.private_subnet_cidr)
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    nat_gateway_id = lookup(element(aws_nat_gateway.main, count.index), "id", null)
+  }
+
+  route {
+    cidr_block                = data.aws_vpc.default.cidr_block
+    vpc_peering_connection_id = aws_vpc_peering_connection.main.id
+  }
+
+  tags = {
+    Name = "private-rt-${count.index+1}"
+  }
 }
 #security group #allow ports
 
