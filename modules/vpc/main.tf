@@ -1,12 +1,23 @@
 #subnet
-resource "aws_subnet" "main" {
-  count             = length(var.subnet_cidr)
+resource "aws_subnet" "public" {
+  count             = length(var.public_subnet_cidr)
   vpc_id            = aws_vpc.main.id
-  cidr_block        = element(var.subnet_cidr, count.index)
+  cidr_block        = element(var.public_subnet_cidr, count.index)
   availability_zone = element(var.az, count.index)
 
   tags = {
-    Name = "subnet-${count.index}"
+    Name = "public-subnet-${count.index+1}"
+  }
+}
+
+resource "aws_subnet" "private" {
+  count             = length(var.private_subnet_cidr)
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = element(var.private_subnet_cidr, count.index)
+  availability_zone = element(var.az, count.index)
+
+  tags = {
+    Name = "private-subnet-${count.index+1}"
   }
 }
 #peering connection
@@ -81,7 +92,7 @@ resource "aws_instance" "test" {
   ami             = data.aws_ami.centos08.id
   instance_type   = "t3.micro"
   security_groups = [aws_security_group.allow_tls.id]
-  subnet_id       = lookup(element(aws_subnet.main,0), "id", null)
+  subnet_id       = lookup(element(aws_subnet.private,0), "id", null)
 
   tags = {
     Name = "test"
