@@ -47,7 +47,7 @@ module "backend" {
   vpc_zone_identifier = lookup(lookup(module.vpc, "main", null), "app_subnets_ids", null)#module.vpc.app_subnets_ids
 }
 
-module "backend" {
+module "frontend" {
   source = "./modules/app"
 
   env          = var.env
@@ -59,6 +59,6 @@ module "backend" {
   app_port            = var.app_port_frontend
   bastion_block       = var.bastion_block
   vpc_id              = lookup(lookup(module.vpc, "main", null), "vpc_id", null) #module.vpc.vpc_id
-  sg_cidr_blocks      = lookup(lookup(module.vpc, "main", null), "pu_subnets_cidr", null)#module.vpc.app_subnets_cidr #need to check
+  sg_cidr_blocks      = lookup(lookup(module.vpc, "main", null), "public_subnets_cidr", null)#module.vpc.app_subnets_cidr #need to check
   vpc_zone_identifier = lookup(lookup(module.vpc, "main", null), "web_subnets_ids", null)#module.vpc.app_subnets_ids
 }
