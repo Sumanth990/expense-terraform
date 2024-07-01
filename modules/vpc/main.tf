@@ -115,6 +115,7 @@ resource "aws_route_table" "private" {
     Name = "private-rt-${count.index+1}"
   }
 }
+
 #security group #allow ports
 
 #VPC
