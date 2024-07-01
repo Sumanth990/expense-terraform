@@ -116,6 +116,13 @@ resource "aws_route_table" "private" {
   }
 }
 
+#route table association
+resource "aws_route_table_association" "private" {
+  count          = length(var.private_subnet_cidr)
+  subnet_id      = lookup(element(aws_subnet.private, count.index), "id", null)
+  route_table_id = lookup(element(aws_route_table.private, count.index), "id", null)
+}
+
 #security group #allow ports
 
 #VPC
