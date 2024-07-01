@@ -3,9 +3,11 @@ project_name = "expense"
 
 vpc = {
   main = {
-    cidr_block          = "10.10.0.0/21"
+    cidr_block         = "10.10.0.0/21"
     public_subnet_cidr = ["10.10.0.0/25", "10.10.0.128/25"]
-    private_subnet_cidr = ["10.10.1.0/25", "10.10.1.128/25"]
-    az                  = ["us-east-1a", "us-east-1b"]
+    web_subnet_cidr    = ["10.10.1.0/25", "10.10.1.128/25"]
+    app_subnet_cidr    = ["10.10.2.0/25", "10.10.2.128/25"]
+    db_subnet_cidr     = ["10.10.3.0/25", "10.10.3.128/25"]
+    az                 = ["us-east-1a", "us-east-1b"]
   }
 }

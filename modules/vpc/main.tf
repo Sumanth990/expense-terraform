@@ -1,4 +1,4 @@
-#subnet
+#public subnet
 resource "aws_subnet" "public" {
   count             = length(var.public_subnet_cidr)
   vpc_id            = aws_vpc.main.id
@@ -10,16 +10,6 @@ resource "aws_subnet" "public" {
   }
 }
 
-resource "aws_subnet" "private" {
-  count             = length(var.private_subnet_cidr)
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = element(var.private_subnet_cidr, count.index)
-  availability_zone = element(var.az, count.index)
-
-  tags = {
-    Name = "private-subnet-${count.index+1}"
-  }
-}
 #peering connection
 resource "aws_vpc_peering_connection" "main" {
   peer_vpc_id   = data.aws_vpc.default.id
@@ -31,7 +21,6 @@ resource "aws_vpc_peering_connection" "main" {
 }
 
 #route entry in route table
-
 resource "aws_route" "main" {
   route_table_id            = aws_vpc.main.main_route_table_id
   destination_cidr_block    = data.aws_vpc.default.cidr_block
@@ -96,9 +85,21 @@ resource "aws_nat_gateway" "main" {
   }
 }
 
-#route table private
-resource "aws_route_table" "private" {
-  count  = length(var.private_subnet_cidr)
+#web subnet
+resource "aws_subnet" "web" {
+  count             = length(var.web_subnet_cidr)
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = element(var.web_subnet_cidr, count.index)
+  availability_zone = element(var.az, count.index)
+
+  tags = {
+    Name = "web-subnet-${count.index+1}"
+  }
+}
+
+#route table web
+resource "aws_route_table" "web" {
+  count  = length(var.web_subnet_cidr)
   vpc_id = aws_vpc.main.id
 
   route {
@@ -112,18 +113,95 @@ resource "aws_route_table" "private" {
   }
 
   tags = {
-    Name = "private-rt-${count.index+1}"
+    Name = "web-rt-${count.index+1}"
   }
 }
 
 #route table association
-resource "aws_route_table_association" "private" {
-  count          = length(var.private_subnet_cidr)
-  subnet_id      = lookup(element(aws_subnet.private, count.index), "id", null)
-  route_table_id = lookup(element(aws_route_table.private, count.index), "id", null)
+resource "aws_route_table_association" "web" {
+  count          = length(var.web_subnet_cidr)
+  subnet_id      = lookup(element(aws_subnet.web, count.index), "id", null)
+  route_table_id = lookup(element(aws_route_table.web, count.index), "id", null)
 }
 
-#security group #allow ports
+#app subnet
+resource "aws_subnet" "app" {
+  count             = length(var.app_subnet_cidr)
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = element(var.app_subnet_cidr, count.index)
+  availability_zone = element(var.az, count.index)
+
+  tags = {
+    Name = "app-subnet-${count.index+1}"
+  }
+}
+
+#route table web
+resource "aws_route_table" "app" {
+  count  = length(var.app_subnet_cidr)
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    nat_gateway_id = lookup(element(aws_nat_gateway.main, count.index), "id", null)
+  }
+
+  route {
+    cidr_block                = data.aws_vpc.default.cidr_block
+    vpc_peering_connection_id = aws_vpc_peering_connection.main.id
+  }
+
+  tags = {
+    Name = "app-rt-${count.index+1}"
+  }
+}
+
+#route table association
+resource "aws_route_table_association" "app" {
+  count          = length(var.app_subnet_cidr)
+  subnet_id      = lookup(element(aws_subnet.app, count.index), "id", null)
+  route_table_id = lookup(element(aws_route_table.app, count.index), "id", null)
+}
+
+
+#db subnet
+resource "aws_subnet" "db" {
+  count             = length(var.db_subnet_cidr)
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = element(var.db_subnet_cidr, count.index)
+  availability_zone = element(var.az, count.index)
+
+  tags = {
+    Name = "db-subnet-${count.index+1}"
+  }
+}
+
+#route table db
+resource "aws_route_table" "db" {
+  count  = length(var.db_subnet_cidr)
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    nat_gateway_id = lookup(element(aws_nat_gateway.main, count.index), "id", null)
+  }
+
+  route {
+    cidr_block                = data.aws_vpc.default.cidr_block
+    vpc_peering_connection_id = aws_vpc_peering_connection.main.id
+  }
+
+  tags = {
+    Name = "db-rt-${count.index+1}"
+  }
+}
+
+#route table association
+resource "aws_route_table_association" "db" {
+  count          = length(var.db_subnet_cidr)
+  subnet_id      = lookup(element(aws_subnet.db, count.index), "id", null)
+  route_table_id = lookup(element(aws_route_table.db, count.index), "id", null)
+}
 
 #VPC
 resource "aws_vpc" "main" {
@@ -131,49 +209,5 @@ resource "aws_vpc" "main" {
 
   tags = {
     Name = "${local.name}-vpc"
-  }
-}
-
-##test instance
-data "aws_ami" "centos08" {
-  most_recent = true
-  name_regex  = "Centos-8-DevOps-Practice"
-  owners      = ["973714476881"]
-}
-
-resource "aws_security_group" "allow_tls" {
-  name        = "allow_tls"
-  description = "Allow TLS inbound traffic and all outbound traffic"
-  vpc_id      = aws_vpc.main.id
-
-  tags = {
-    Name = "allow_tls"
-  }
-
-  ingress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-
-  egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-  }
-}
-
-resource "aws_instance" "test" {
-  ami             = data.aws_ami.centos08.id
-  instance_type   = "t3.micro"
-  security_groups = [aws_security_group.allow_tls.id]
-  subnet_id       = lookup(element(aws_subnet.private,0), "id", null)
-
-  tags = {
-    Name = "test"
   }
 }
