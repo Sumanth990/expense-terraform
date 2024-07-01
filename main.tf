@@ -30,3 +30,19 @@ module "rds" {
   project_name      = var.project_name
   kms_key_id        = var.kms_key_id
 }
+
+module "backend" {
+  source = "./modules/app"
+
+  env          = var.env
+  component    = var.component
+  project_name = var.project_name
+
+  instance_capacity   = var.backend_instance_capacity
+  instance_type       = var.instance_type
+  app_port            = var.app_port_backend
+  bastion_block       = var.bastion_block
+  vpc_id              = module.vpc.vpc_id
+  sg_cidr_blocks      = module.vpc.app_subnets_cidr #need to check
+  vpc_zone_identifier = module.vpc.app_subnets_ids
+}

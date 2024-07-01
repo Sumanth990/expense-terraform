@@ -23,3 +23,9 @@ rds = {
     family            = "mysql5.7"
   }
 }
+
+#backend
+component                 = "backend"
+app_port_backend          = 8080
+bastion_block             = ["172.31.35.134/32"]
+backend_instance_capacity = 1
