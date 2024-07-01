@@ -43,3 +43,47 @@ resource "aws_vpc" "main" {
     Name = "${local.name}-vpc"
   }
 }
+
+##test instance
+data "aws_ami" "centos08" {
+  most_recent = true
+  name_regex  = "Centos-8-DevOps-Practice"
+  owners      = ["973714476881"]
+}
+
+resource "aws_security_group" "allow_tls" {
+  name        = "allow_tls"
+  description = "Allow TLS inbound traffic and all outbound traffic"
+  vpc_id      = aws_vpc.main.id
+
+  tags = {
+    Name = "allow_tls"
+  }
+
+  ingress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+}
+
+resource "aws_instance" "test" {
+  ami             = data.aws_ami.centos08.id
+  instance_type   = "t3.micro"
+  security_groups = [aws_security_group.allow_tls.id]
+  subnet_id       = lookup(element(aws_subnet.main,0), "id", null)
+
+  tags = {
+    Name = "test"
+  }
+}
