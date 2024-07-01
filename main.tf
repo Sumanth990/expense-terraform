@@ -35,7 +35,7 @@ module "backend" {
   source = "./modules/app"
 
   env          = var.env
-  component    = var.component
+  component    = "backend"
   project_name = var.project_name
 
   instance_capacity   = var.backend_instance_capacity
