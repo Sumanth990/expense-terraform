@@ -3,7 +3,6 @@ variable "vpc" {}
 variable "project_name" {}
 variable "rds" {}
 variable "kms_key_id" {}
-variable "component" {}
 variable "backend_instance_capacity" {}
 variable "instance_type" {}
 variable "app_port_backend" {}
