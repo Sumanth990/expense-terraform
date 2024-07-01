@@ -41,7 +41,7 @@ resource "aws_security_group" "main" {
 }
 
 #rds
-resource "aws_db_instance" "default" {
+resource "aws_db_instance" "main" {
   allocated_storage      = var.allocated_storage
   db_name                = var.db_name
   engine                 = var.engine
@@ -57,4 +57,3 @@ resource "aws_db_instance" "default" {
   db_subnet_group_name   = aws_db_subnet_group.main.name
   vpc_security_group_ids = [aws_security_group.main.id]
 }
-
