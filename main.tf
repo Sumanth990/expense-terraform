@@ -42,7 +42,7 @@ module "backend" {
   instance_type       = var.instance_type
   app_port            = var.app_port_backend
   bastion_block       = var.bastion_block
-  vpc_id              = module.vpc.vpc_id
-  sg_cidr_blocks      = module.vpc.app_subnets_cidr #need to check
-  vpc_zone_identifier = module.vpc.app_subnets_ids
+  vpc_id              = lookup(lookup(module.vpc, "main", null), "vpc_id", null) #module.vpc.vpc_id
+  sg_cidr_blocks      = lookup(lookup(module.vpc, "main", null), "app_subnets_cidr", null)#module.vpc.app_subnets_cidr #need to check
+  vpc_zone_identifier = lookup(lookup(module.vpc, "main", null), "app_subnets_ids", null)#module.vpc.app_subnets_ids
 }
