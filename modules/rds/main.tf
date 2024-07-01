@@ -49,7 +49,7 @@ resource "aws_db_instance" "main" {
   instance_class         = var.instance_class
   username               = data.aws_ssm_parameter.username.value
   password               = data.aws_ssm_parameter.password.value
-  parameter_group_name   = "default.mysql8.0"
+  parameter_group_name   = aws_db_parameter_group.main.name
   skip_final_snapshot    = true
   identifier             = "${local.name}-rds"
   storage_encrypted      = true
