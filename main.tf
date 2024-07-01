@@ -70,7 +70,7 @@ module "public-alb" {
   project_name = var.project_name
 
   alb_name       = "public"
-  sg_cidr_blocks = [0.0.0.0/0]
+  sg_cidr_blocks = ["0.0.0.0/0"]
   internal       = false
 
   subnets  = lookup(lookup(module.vpc, "main", null), "public_subnets_ids", null)
