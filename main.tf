@@ -21,10 +21,10 @@ module "rds" {
   engine_version    = lookup(each.value, "engine_version", null)
   instance_class    = lookup(each.value, "instance_class", null)
   family            = lookup(each.value, "family", null )
-  subnet_ids        = lookup(lookup(module.vpc, "main", null), "db_subnet_cidrs", null)
+  subnet_ids        = lookup(lookup(module.vpc, "main", null), "db_subnets_cidr", null)
   vpc_id            = lookup(lookup(module.vpc, "main", null ), "vpc_id", null)
 
-  sg_cidr_block     = lookup(lookup(module.vpc, "main", null ), "app_subnets_cidrs", null)
+  sg_cidr_block     = lookup(lookup(module.vpc, "main", null ), "app_subnets_cidr", null)
 
   env               = var.env
   project_name      = var.project_name
