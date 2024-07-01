@@ -38,11 +38,27 @@ module "backend" {
   component    = "backend"
   project_name = var.project_name
 
-  instance_capacity   = var.backend_instance_capacity
+  instance_capacity   = var.instance_capacity
   instance_type       = var.instance_type
   app_port            = var.app_port_backend
   bastion_block       = var.bastion_block
   vpc_id              = lookup(lookup(module.vpc, "main", null), "vpc_id", null) #module.vpc.vpc_id
   sg_cidr_blocks      = lookup(lookup(module.vpc, "main", null), "app_subnets_cidr", null)#module.vpc.app_subnets_cidr #need to check
   vpc_zone_identifier = lookup(lookup(module.vpc, "main", null), "app_subnets_ids", null)#module.vpc.app_subnets_ids
+}
+
+module "backend" {
+  source = "./modules/app"
+
+  env          = var.env
+  component    = "frontend"
+  project_name = var.project_name
+
+  instance_capacity   = var.instance_capacity
+  instance_type       = var.instance_type
+  app_port            = var.app_port_frontend
+  bastion_block       = var.bastion_block
+  vpc_id              = lookup(lookup(module.vpc, "main", null), "vpc_id", null) #module.vpc.vpc_id
+  sg_cidr_blocks      = lookup(lookup(module.vpc, "main", null), "pu_subnets_cidr", null)#module.vpc.app_subnets_cidr #need to check
+  vpc_zone_identifier = lookup(lookup(module.vpc, "main", null), "web_subnets_ids", null)#module.vpc.app_subnets_ids
 }

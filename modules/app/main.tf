@@ -6,7 +6,7 @@ resource "aws_launch_template" "main" {
   vpc_security_group_ids = [aws_security_group.main.id]
 }
 
-resource "aws_autoscaling_group" "bar" {
+resource "aws_autoscaling_group" "main" {
   desired_capacity    = var.instance_capacity
   max_size            = var.instance_capacity
   min_size            = var.instance_capacity

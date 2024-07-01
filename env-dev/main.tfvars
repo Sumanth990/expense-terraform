@@ -26,6 +26,8 @@ rds = {
 }
 
 #backend
-app_port_backend          = 8080
-backend_instance_capacity = 1
-instance_type             = "t3.small"
+app_port_backend   = 8080
+instance_capacity  = 1
+instance_type      = "t3.small"
+
+app_port_frontend = 80
