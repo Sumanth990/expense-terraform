@@ -63,6 +63,15 @@ resource "aws_lb_listener" "http" {
   }
 }
 
+#dns "cname" record
+resource "aws_route53_record" "main" {
+  zone_id = var.zone_id
+  name    = "${var.dns_name}-${var.env}"
+  type    = "CNAME"
+  ttl     = 30
+  records = [aws_lb.main.dns_name]
+}
+
 #alb
 resource "aws_lb" "main" {
   name               = local.name

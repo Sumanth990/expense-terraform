@@ -7,3 +7,5 @@ variable "internal" {}
 variable "subnets" {}
 variable "certificate_arn" {}
 variable "target_group_arn" {}
+variable "dns_name" {}
+variable "zone_id" {}

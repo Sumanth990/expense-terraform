@@ -68,6 +68,7 @@ module "public-alb" {
 
   env          = var.env
   project_name = var.project_name
+  dns_name     = "frontend"
 
   alb_name         = "public"
   sg_cidr_blocks   = ["0.0.0.0/0"]
@@ -76,6 +77,7 @@ module "public-alb" {
   certificate_arn  = var.certificate_arn
   subnets          = lookup(lookup(module.vpc, "main", null), "public_subnets_ids", null)
   vpc_id           = lookup(lookup(module.vpc, "main", null), "vpc_id", null)
+  zone_id          = var.zone_id
 }
 
 module "private-alb" {
@@ -83,6 +85,7 @@ module "private-alb" {
 
   env          = var.env
   project_name = var.project_name
+  dns_name     = "backend"
 
   alb_name         = "private"
   sg_cidr_blocks   = lookup(lookup(module.vpc, "main", null), "web_subnets_cidr", null)
@@ -92,4 +95,5 @@ module "private-alb" {
 
   subnets  = lookup(lookup(module.vpc, "main", null), "app_subnets_ids", null)
   vpc_id   = lookup(lookup(module.vpc, "main", null), "vpc_id", null)
+  zone_id          = var.zone_id
 }

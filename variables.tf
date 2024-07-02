@@ -9,3 +9,4 @@ variable "bastion_block" {}
 variable "instance_capacity" {}
 variable "app_port_frontend" {}
 variable "certificate_arn" {}
+variable "zone_id" {}
