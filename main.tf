@@ -72,10 +72,10 @@ module "public-alb" {
   alb_name         = "public"
   sg_cidr_blocks   = ["0.0.0.0/0"]
   internal         = false
-  target_group_arn = lookup(lookup(module.rds, "main", null ), "target_group_arn", null)
+  target_group_arn = module.frontend.target_group_arn
   certificate_arn  = var.certificate_arn
-  subnets  = lookup(lookup(module.vpc, "main", null), "public_subnets_ids", null)
-  vpc_id   = lookup(lookup(module.vpc, "main", null), "vpc_id", null)
+  subnets          = lookup(lookup(module.vpc, "main", null), "public_subnets_ids", null)
+  vpc_id           = lookup(lookup(module.vpc, "main", null), "vpc_id", null)
 }
 
 module "private-alb" {
@@ -87,7 +87,7 @@ module "private-alb" {
   alb_name         = "private"
   sg_cidr_blocks   = lookup(lookup(module.vpc, "main", null), "web_subnets_cidr", null)
   internal         = true
-  target_group_arn = lookup(lookup(module.rds, "main", null ), "target_group_arn", null)
+  target_group_arn = module.backend.target_group_arn
   certificate_arn  = var.certificate_arn
 
   subnets  = lookup(lookup(module.vpc, "main", null), "app_subnets_ids", null)
