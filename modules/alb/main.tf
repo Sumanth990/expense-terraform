@@ -32,7 +32,6 @@ resource "aws_security_group" "main" {
     Name = "${local.name}-sg"
   }
 }
-
 #alb listener
 resource "aws_lb_listener" "main" {
   load_balancer_arn = aws_lb.main.arn
@@ -45,11 +44,8 @@ resource "aws_lb_listener" "main" {
     type             = "forward"
     target_group_arn = var.target_group_arn
   }
-
-  default_action {
-    type = "redirect"
-  }
 }
+
 #redirection
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.main.arn
