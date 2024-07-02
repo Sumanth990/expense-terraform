@@ -25,3 +25,11 @@ output "web_subnets_cidr" {
 output "app_subnets_cidr" {
   value = aws_subnet.app.*.cidr_block
 }
+
+output "public_subnets_cidr" {
+  value = aws_subnet.public.*.cidr_block
+}
+
+output "db_subnets_cidr" {
+  value = aws_subnet.db.*.cidr_block
+}
