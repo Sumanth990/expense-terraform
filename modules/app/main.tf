@@ -65,4 +65,12 @@ resource "aws_lb_target_group" "main" {
   port     = var.app_port
   protocol = "HTTP"
   vpc_id   = var.vpc_id
+
+  health_check {
+    path                = "/health"
+    healthy_threshold   = 2 #it will check 2 times
+    unhealthy_threshold = 2
+    interval            = 5 #(more responsive) it will check if the target is good or bad.
+    timeout             = 2 #timeout for doing health check.
+  }
 }
