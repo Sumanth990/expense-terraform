@@ -39,7 +39,7 @@ resource "aws_lb" "main" {
   load_balancer_type = "application"
   security_groups    = [aws_security_group.main.id]
   subnets            = var.subnets
-  enable_deletion_protection = false
+  #enable_deletion_protection = false
 
   tags = {
     Environment = local.name
