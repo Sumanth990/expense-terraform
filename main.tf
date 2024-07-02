@@ -69,10 +69,11 @@ module "public-alb" {
   env          = var.env
   project_name = var.project_name
 
-  alb_name       = "public"
-  sg_cidr_blocks = ["0.0.0.0/0"]
-  internal       = false
-
+  alb_name         = "public"
+  sg_cidr_blocks   = ["0.0.0.0/0"]
+  internal         = false
+  target_group_arn = lookup(lookup(module.rds, "main", null ), "target_group_arn", null)
+  certificate_arn  = var.certificate_arn
   subnets  = lookup(lookup(module.vpc, "main", null), "public_subnets_ids", null)
   vpc_id   = lookup(lookup(module.vpc, "main", null), "vpc_id", null)
 }
@@ -83,9 +84,11 @@ module "private-alb" {
   env          = var.env
   project_name = var.project_name
 
-  alb_name       = "private"
-  sg_cidr_blocks = lookup(lookup(module.vpc, "main", null), "web_subnets_cidr", null)
-  internal       = true
+  alb_name         = "private"
+  sg_cidr_blocks   = lookup(lookup(module.vpc, "main", null), "web_subnets_cidr", null)
+  internal         = true
+  target_group_arn = lookup(lookup(module.rds, "main", null ), "target_group_arn", null)
+  certificate_arn  = var.certificate_arn
 
   subnets  = lookup(lookup(module.vpc, "main", null), "app_subnets_ids", null)
   vpc_id   = lookup(lookup(module.vpc, "main", null), "vpc_id", null)

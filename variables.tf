@@ -8,3 +8,4 @@ variable "app_port_backend" {}
 variable "bastion_block" {}
 variable "instance_capacity" {}
 variable "app_port_frontend" {}
+variable "certificate_arn" {}

@@ -10,6 +10,7 @@ resource "aws_autoscaling_group" "main" {
   desired_capacity    = var.instance_capacity
   max_size            = var.instance_capacity
   min_size            = var.instance_capacity
+  target_group_arns   = [aws_lb_target_group.main.arn]
   vpc_zone_identifier = var.vpc_zone_identifier
 
   launch_template {
@@ -56,4 +57,12 @@ resource "aws_security_group" "main" {
   tags = {
     Name = "${local.name}-sg"
   }
+}
+
+#target group
+resource "aws_lb_target_group" "main" {
+  name     = "${local.name}-tg"
+  port     = var.app_port
+  protocol = "HTTP"
+  vpc_id   = var.vpc_id
 }
