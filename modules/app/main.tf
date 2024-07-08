@@ -16,6 +16,7 @@ resource "aws_launch_template" "main" {
 }
 
 resource "aws_autoscaling_group" "main" {
+  name                = "${local.name}-asg"
   desired_capacity    = var.instance_capacity
   max_size            = var.instance_capacity
   min_size            = var.instance_capacity
@@ -116,7 +117,7 @@ resource "aws_iam_role" "main" {
             "ssm:GetParameters",
             "ssm:GetParameter"
           ],
-          "Resource" : "arn:aws:ssm:us-east-1:992382357886:parameter/{{var.env}}.{{var.project_name}}.{{var.component}}.*"
+          "Resource" : "arn:aws:ssm:us-east-1:992382357886:parameter/${var.env}.${var.project_name}.${var.component}.*"
         },
         {
           "Sid" : "DescribeAllParameters",
