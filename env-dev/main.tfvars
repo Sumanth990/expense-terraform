@@ -18,7 +18,7 @@ vpc = {
 
 rds = {
   main = {
-    allocated_storage = 10
+    allocated_storage = 8
     db_name           = "expense"
     engine            = "mysql"
     engine_version    = "5.7"
