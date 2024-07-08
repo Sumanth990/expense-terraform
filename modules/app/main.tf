@@ -11,7 +11,7 @@ resource "aws_launch_template" "main" {
   }))
 
   iam_instance_profile {
-    name = "aws_iam_instance_profile.main.name"
+    name = aws_iam_instance_profile.main.name
   }
 }
 
