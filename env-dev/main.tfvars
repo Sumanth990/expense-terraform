@@ -18,11 +18,11 @@ vpc = {
 
 rds = {
   main = {
-    allocated_storage = 8
+    allocated_storage = 10
     db_name           = "expense"
     engine            = "mysql"
     engine_version    = "5.7"
-    instance_class    = "db.t3.micro"
+    instance_class    = "db.t3.small"
     family            = "mysql5.7"
   }
 }
