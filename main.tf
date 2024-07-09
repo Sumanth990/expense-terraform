@@ -39,6 +39,7 @@ module "backend" {
   component    = "backend"
   project_name = var.project_name
 
+  kms                 = var.kms_key_id
   instance_capacity   = var.instance_capacity
   instance_type       = var.instance_type
   app_port            = var.app_port_backend
@@ -56,6 +57,7 @@ module "frontend" {
   component    = "frontend"
   project_name = var.project_name
 
+  kms                 = var.kms_key_id
   instance_capacity   = var.instance_capacity
   instance_type       = var.instance_type
   app_port            = var.app_port_frontend
