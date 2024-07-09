@@ -32,7 +32,7 @@ module "rds" {
 }
 
 module "backend" {
-  parameters = ["arn:aws:ssm:us-east-1:992382357886:parameter/${var.env}.${var.project_name}.rds.*"]
+  parameters = ["arn:aws:ssm:us-east-1:767398130568:parameter/${var.env}.${var.project_name}.rds.*"]
   source = "./modules/app"
 
   env          = var.env
