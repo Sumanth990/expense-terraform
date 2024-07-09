@@ -32,6 +32,7 @@ module "rds" {
 }
 
 module "backend" {
+  parameters = ["rds"]
   source = "./modules/app"
 
   env          = var.env
@@ -48,6 +49,7 @@ module "backend" {
 }
 
 module "frontend" {
+  parameters = []
   source = "./modules/app"
 
   env          = var.env
