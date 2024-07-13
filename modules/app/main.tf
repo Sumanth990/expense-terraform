@@ -10,6 +10,7 @@ resource "aws_launch_template" "main" {
     env       = var.env
   }))
 
+
   iam_instance_profile {
     name = aws_iam_instance_profile.main.name
   }
@@ -39,7 +40,7 @@ resource "aws_autoscaling_group" "main" {
     version = "$Latest"
   }
 
-  tag {
+  tag { 
     key                 = "Name"
     value               = local.name
     propagate_at_launch = true
