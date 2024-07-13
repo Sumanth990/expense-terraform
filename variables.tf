@@ -10,3 +10,4 @@ variable "instance_capacity" {}
 variable "app_port_frontend" {}
 variable "certificate_arn" {}
 variable "zone_id" {}
+variable "prometheus_block" {}
